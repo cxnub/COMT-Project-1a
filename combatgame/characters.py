@@ -11,7 +11,7 @@ from combatgame.resources.ascii_art import ascii_arts
 from combatgame.ui import Ui
 
 if TYPE_CHECKING:
-    from enemies import EnemyCharacter
+    from combatgame.enemies import EnemyCharacter
 
 # get directory of this file
 this_file_dir = os.path.dirname(os.path.abspath(__file__))
@@ -144,30 +144,31 @@ class BaseCharacter:
         # reduce speed points by 1
         self.speed_points -= 1
 
-        # checks if target have active effect
-        for effect in target.active_effects:
-            if isinstance(effect, SkillEffects.Invincible):
-                effect: SkillEffects.Invincible
-                log = f"{self.name}'s attack was REJECTED due to {target.name}'s" + \
-                    f" {effect.belongs_to}."
+        if hasattr(target, "active_effects"):
+            # checks if target have active effect
+            for effect in target.active_effects:
+                if isinstance(effect, SkillEffects.Invincible):
+                    effect: SkillEffects.Invincible
+                    log = f"{self.name}'s attack was REJECTED due to {target.name}'s" + \
+                        f" {effect.belongs_to}."
 
-                # remove effect if its used up
-                effect.use_count -= 1
-                if effect.use_count == 0:
-                    target.active_effects.remove(effect)
+                    # remove effect if its used up
+                    effect.use_count -= 1
+                    if effect.use_count == 0:
+                        target.active_effects.remove(effect)
 
-                return log
+                    return log
 
-            if isinstance(effect, SkillEffects.ReflectiveShield):
-                effect: SkillEffects.ReflectiveShield
-                log = effect.take_effect(self, self.attack_points)
+                if isinstance(effect, SkillEffects.ReflectiveShield):
+                    effect: SkillEffects.ReflectiveShield
+                    log = effect.take_effect(self, self.attack_points)
 
-                # remove effect if its used up
-                effect.use_count -= 1
-                if effect.use_count == 0:
-                    target.active_effects.remove(effect)
+                    # remove effect if its used up
+                    effect.use_count -= 1
+                    if effect.use_count == 0:
+                        target.active_effects.remove(effect)
 
-                return log
+                    return log
 
         # calculates chances of critical hit based on job class's luck
         # critical hits ignores target's defense points and reduces their HP

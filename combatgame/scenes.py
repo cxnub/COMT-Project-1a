@@ -102,13 +102,22 @@ class Scenes:
             Ui.execute_lore(lore.PLAYER_LOST)
             return True
 
-    def scene_two(self):
+    def scene_two(self, flash=True):
         """First scene of the game flow.
         
+        Parameters
+        ----------
+        flash : bool
+            Whether to have flash effects for thunderstorm. Defaults to True.
+
         Returns
         -------
         game_over : bool
             True if game is over, False otherwise.
+
+        Notes
+        -----
+        FLASH WARNING!!
         """
 
         Ui.execute_lore(lore.SCENE_TWO)
@@ -159,7 +168,7 @@ class Scenes:
                 if character.is_alive():
                     character.magic_points += 10
 
-            Ui.Animation.display_thunderstorm()
+            Ui.Animation.display_thunderstorm(flash)
             Ui.execute_lore(option_three_lore[1])
 
             player_won = second_combat_scene()
@@ -181,7 +190,7 @@ class Scenes:
         return selected_option()
 
 
-    def run_scenes(self):
+    def run_scenes(self, flash):
         """Run the scenes in order."""
         scenes_order = [self.start_scene, self.scene_one, self.scene_two]
         for scene in scenes_order:

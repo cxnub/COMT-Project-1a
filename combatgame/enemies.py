@@ -1,6 +1,5 @@
 """Classes implementation for enemies with their attributes."""
 import os
-import random
 from functools import partial
 
 from combatgame.characters import BaseCharacter
@@ -44,6 +43,7 @@ class EnemyCharacter(BaseCharacter):
         # deletes magic points and skills since enemies do not have these
         del self.magic_points
         del self.skills
+        del self.active_effects
 
         # initialize attributes
         attr = enemy_attributes[name]

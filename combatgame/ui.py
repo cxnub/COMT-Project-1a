@@ -16,8 +16,8 @@ import textwrap
 from typing import AnyStr, Dict, TYPE_CHECKING, Callable, List
 
 if TYPE_CHECKING:
-    from characters import BaseCharacter
-    from enemies import EnemyCharacter
+    from combatgame.characters import BaseCharacter
+    from combatgame.enemies import EnemyCharacter
 
 
 class Ui:
@@ -205,24 +205,55 @@ class Ui:
         return " " * (start - 1) + string
 
     @staticmethod
+    def print_box(content):
+        """Print content enclosed in a box.
+
+        content : str
+            The content to be enclosed in the box.
+        """
+
+        # split newlines
+        lines = content.split('\n')
+        max_width = max(len(line) for line in lines)
+
+        # place content within box borders
+        box = [
+            f'║ {line}{" " * (max_width - len(line))} ║'
+            for line in lines
+        ]
+
+        # print the top line
+        print(f'╔{"═" * (max_width + 2)}╗')
+        # print content line
+        print(*box, sep='\n')
+        # print the bottom line
+        print(f'╚{"═" * (max_width + 2)}╝')
+
+    @staticmethod
     def display_combat_stats(
-        player_character: "BaseCharacter",
-        enemy_character: "EnemyCharacter",
-        sep_column_position: int,
-        sep: str="|"
+        character_one: "BaseCharacter",
+        character_two: "BaseCharacter",
+        sep_column_position: int=0,
+        sep: str="|",
+        include_skills: bool=False,
+        include_effects: bool=True
         ):
-        """Displays the statistics of both player and enemy characters.
+        """Displays the statistics of two characters side by side.
         
         Parameters
         ----------
-        player_character : BaseCharacter
-            The player character object.
-        enemy_character : EnemyCharacter
-            The enemy character object.
+        character_one : BaseCharacter
+            The first character object.
+        character_two : BaseCharacter
+            The second character object.
         sep : str
-            The seperator string between player character and enemy character stats.
+            The seperator string between the characters stats. Defaults to "|".
         seperator_column_position : int
-            The column position of the seperator.
+            The column position of the seperator. Defaults to 1.
+        include_skills : bool
+            Whether to include skills. Defaults to False. 
+        include_effects : bool
+            Whether to include active effects stats. Defaults to True.
         """
 
         def add_seperator(string: str):
@@ -261,26 +292,65 @@ class Ui:
                 # append the line to stats_line list
                 stats_line.append(line)
 
+            # checks if character have certain attributes
+            attribute_check = all(
+                    [
+                    hasattr(character, "magic_points"),
+                    hasattr(character, "active_effects"),
+                    hasattr(character, "skills")
+                        ]
+                )
+            if attribute_check:
+                # add magic points stats
+                stats_line.append(
+                    Ui.place_string(
+                        f"Magic: {character.magic_points} Points",
+                        character.starting_column_position
+                    )
+                )
+
+                # add active effects if include_effects is True
+                if include_effects:
+                    # seperate active effects with a comma
+                    active_effects = ', '.join(str(effect) for effect in character.active_effects)
+
+                    stats_line.append(
+                    Ui.place_string(
+                        f"Effects: {active_effects}",
+                        character.starting_column_position
+                    )
+                )
+
+                # add skills if include_skills is True
+                if include_skills:
+                    # seperate skills with a comma
+                    skills = ', '.join(str(skill.name) for skill in character.skills)
+
+                    stats_line.append(
+                    Ui.place_string(
+                        f"Skills: {skills}",
+                        character.starting_column_position
+                    )
+                )
+
             return stats_line
 
-        # create stats_line for player and enemy characters
-        player_stats_lines = create_stats_line(player_character)
-        enemy_stats_lines = create_stats_line(enemy_character)
+        # create stats_line for both characters
+        stats_lines = [create_stats_line(character_one), create_stats_line(character_two)]
+
+        # get length of longer list
+        max_length = len(max(stats_lines))
+
+        # match the length of the lists
+        for stats_line in stats_lines:
+            stats_line += [""] * (max_length - len(stats_line))
 
         stat_display_lines = []
 
-        # combine both player_stats_lines and enemy_stats_lines into a single line
+        # combine both characters stats into a single line
         # as well as add the seperator in
-        for line1, line2 in zip(player_stats_lines, enemy_stats_lines):
+        for line1, line2 in zip(stats_lines[0], stats_lines[1]):
             stat_display_lines.append(add_seperator(f"{line1}{line2[len(line1):]}"))
-
-        # append for additional player character stats
-        stat_display_lines.append(f"Magic: {player_character.magic_points} Points")
-
-        # active effects
-        active_effects = ', '.join(str(effect) for effect in player_character.active_effects) \
-            if player_character.active_effects else ""
-        stat_display_lines.append(f"Effects: {active_effects}")
 
         # print out the stats
         print("\n".join(stat_display_lines))
@@ -414,7 +484,7 @@ class Ui:
             finished = True
 
         @staticmethod
-        def print_line_by_line(string, delay=0.15):
+        def print_line_by_line(string, delay=0.1):
             """Scrolling up animation for printing text.
             
             Parameters
@@ -422,7 +492,7 @@ class Ui:
             string : str
                 The string to print.
             delay : float
-                The delay in seconds. Defaults to 0.15.
+                The delay in seconds. Defaults to 0.1.
             """
 
             lines = string.split("\n")
@@ -575,13 +645,15 @@ $$    $$/    $$$/    $$       |$$ |  $$ |
             """)
 
         @staticmethod
-        def display_thunderstorm(frames: int=20):
+        def display_thunderstorm(frames: int=20, flash: bool=True):
             """Animate a thunderstorm in console.
             
             Parameters
             ----------
             frames : int
                 The amount of frames to animate. Defaults to 20.
+            flash : bool
+                Whether to display lightning flashes. Defaults to True.
             """
 
             width, height = os.get_terminal_size()
@@ -601,9 +673,10 @@ $$    $$/    $$$/    $$       |$$ |  $$ |
 
                         time.sleep(3)
 
-            # run the lightning animation in the background
-            lightning_animation = threading.Thread(target=lightning_animation)
-            lightning_animation.start()
+            if flash:
+                # run the lightning animation in the background
+                lightning_animation = threading.Thread(target=lightning_animation)
+                lightning_animation.start()
 
             raindrops = ""
             rain_animation = []

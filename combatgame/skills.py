@@ -44,6 +44,9 @@ class BaseSkill:
 
     message_displays : list of str
         A list of message displays when skill is used.
+
+    belongs_to : str
+        The character the skill belongs to.
     """
 
     name: str = ""
@@ -52,6 +55,7 @@ class BaseSkill:
     speed_points_cost: int = 0
     require_target: bool = False
     message_displays: list[str] = []
+    belongs_to: str = ""
 
     def __init__(self, skill_class_name: str):
         """Initialize a skill instance.
@@ -77,6 +81,7 @@ class BaseSkill:
         self.speed_points_cost: int = int(attr["sp_cost"])
         require_target_attr = str(attr["require_target"]).lower()
         self.require_target: bool = require_target_attr == "yes"
+        self.belongs_to: str = str(attr["belongs_to"])
 
     def use(self, character: "BaseCharacter", target: "EnemyCharacter" = None):
         """Use the skill."""
