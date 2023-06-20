@@ -1,13 +1,11 @@
 """Module to store scenes"""
-
-import random
 import time
 from typing import List
 
 from combatgame.ui import Ui
 from combatgame.game_manager import GameManager
 from combatgame.characters import BaseCharacter, Tank, MirrorMage, Healer, Assassin
-from combatgame.enemies import EnemyCharacter, enemy_names
+from combatgame.enemies import EnemyCharacter
 from combatgame.resources import lore
 
 
