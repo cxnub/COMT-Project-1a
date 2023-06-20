@@ -1,6 +1,7 @@
 """Module to store scenes"""
 import time
 from typing import List
+from functools import partial
 
 from combatgame.ui import Ui
 from combatgame.game_manager import GameManager
@@ -20,7 +21,7 @@ class Scenes:
         Whether to display lore or skip it
     """
 
-    def __init__(self, show_lore: bool=True):
+    def __init__(self):
         self.selected_characters: List[BaseCharacter] = []
 
     def start_scene(self):
@@ -190,7 +191,7 @@ class Scenes:
 
     def run_scenes(self, flash):
         """Run the scenes in order."""
-        scenes_order = [self.start_scene, self.scene_one, self.scene_two]
+        scenes_order = [self.start_scene, self.scene_one, partial(self.scene_two, flash)]
         for scene in scenes_order:
             game_over = scene()
             if game_over:
