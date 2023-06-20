@@ -1,3 +1,9 @@
+"""CATastrophe Chronicles: The Wildcat Cafe
+
+This is the main script for CATastrophe Chronicles: The Wildcat Cafe.
+It is the entry point for running the game.
+"""
+
 from combatgame.ui import Ui
 from combatgame.scenes import Scenes
 
