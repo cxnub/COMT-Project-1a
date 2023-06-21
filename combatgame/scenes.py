@@ -24,6 +24,11 @@ class Scenes:
     def __init__(self):
         self.selected_characters: List[BaseCharacter] = []
 
+    def reset(self):
+        """Resets the class variables to default values."""
+
+        self.selected_characters: List[BaseCharacter] = []
+
     def start_scene(self):
         """Start of the game flow.
         
@@ -133,11 +138,14 @@ class Scenes:
             player_won = second_combat.start_combat()
             if player_won:
                 Ui.execute_lore(lore.SECOND_COMBAT_WIN)
+                return False
 
-            return player_won
-
+            else:
+                return True
 
         def option_one_scene():
+            # the scene if the player chose option 1
+
             option_one_lore = lore.SCENE_TWO_OPTION_ONE
             Ui.execute_lore(option_one_lore[0])
 
@@ -152,13 +160,20 @@ class Scenes:
             if player_won:
                 Ui.execute_lore(option_one_lore[2])
 
+            else:
+                # return game_over = True, if player lost.
+                return True
+
             return option_two_scene()
 
         def option_two_scene():
+            # the scene if the player chose option 2
+
             Ui.execute_lore(lore.SCENE_TWO_OPTION_TWO[0])
-            return
 
         def option_three_scene():
+            # the scene if the player chose option 3
+
             option_three_lore = lore.SCENE_TWO_OPTION_THREE
             Ui.execute_lore(option_three_lore[0])
 
@@ -173,8 +188,11 @@ class Scenes:
             player_won = second_combat_scene()
             if player_won:
                 Ui.execute_lore(option_three_lore[2])
+                return option_two_scene()
 
-            return option_two_scene()
+            else:
+                # return game_over = True, if player lost.
+                return True
 
         scene_two_options_dict = {
             "The Whispering Caverns": option_one_scene,
@@ -195,6 +213,9 @@ class Scenes:
         for scene in scenes_order:
             game_over = scene()
             if game_over:
+                # resets class variables
+                self.reset()
+
                 Ui.Animation.display_game_over()
                 time.sleep(2)
                 return
