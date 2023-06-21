@@ -90,8 +90,15 @@ class GameManager:
         Ui.display_combat_screen(
             self.active_player_character, self.active_enemy_character, self.battle_log
             )
-        input("You won!\nPress enter to continue...")
-        return self.player_won()
+
+        # checks if player won
+        player_won = self.player_won()
+        battle_outcome = "You won!" if player_won else "You lost..."
+
+        print(battle_outcome)
+
+        input("Press enter to continue...")
+        return player_won
 
     def run_battle_logic(self, flag: bool=False):
         """The logic implementation for the combat battle.
