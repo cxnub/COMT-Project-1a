@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 from combatgame.skills import Skills, BaseSkill, SkillEffects
 from combatgame.utils.utils import csv_to_dict
 from combatgame.resources.ascii_art import ascii_arts
-from combatgame.ui import Ui
 
 if TYPE_CHECKING:
     from combatgame.enemies import EnemyCharacter
@@ -314,9 +313,9 @@ class BaseCharacter:
 
         if skill.require_target:
             print("Skill requires a target argument.")
+            return None
 
-        else:
-            return skill.use(self)
+        return skill.use(self)
 
     def is_alive(self):
         """Checks if hp is > 0

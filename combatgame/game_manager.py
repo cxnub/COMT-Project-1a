@@ -177,32 +177,43 @@ class GameManager:
             # update idle character's stat (player)
             self.update_idle_character_stats(player)
 
-        current_time = datetime.now().strftime("%H:%M:%S - ")
-
         if not player.is_alive():
-            player.health_points = 0
-            self.battle_log.append(
-                current_time + f"{player.name} has been defeated by {enemy.name}!"
-                )
-
-            if not self.is_game_over():
-                # set new active player character
-                self.active_player_character = next(
-                    (character for character in self.player_characters if character.is_alive()),
-                    None
-                    )
+            self.handle_defeated_character(player, enemy)
 
         elif not enemy.is_alive():
-            enemy.health_points = 0
-            self.battle_log.append(
-                current_time + f"{enemy.name} has been defeated by {player.name}!"
+            self.handle_defeated_character(enemy, player)
+
+        return None
+
+    def handle_defeated_character(self, character: BaseCharacter, opponent: BaseCharacter):
+        """Handles the logic when a character is defeated.
+        
+        Parameters
+        ----------
+        character : BaseCharacter
+            The character that is defeated.
+        opponent : BaseCharacter
+            The defeated character's opponent.
+        """
+
+        current_time = datetime.now().strftime("%H:%M:%S - ")
+
+        character.health_points = 0
+        self.battle_log.append(
+                current_time + f"{character.name} has been defeated by {opponent.name}!"
                 )
 
-            if not self.is_game_over():
-                # set new active enemy character
+        if not self.is_game_over():
+            # checks if its a player or enemy character that is defeated
+            if isinstance(character, EnemyCharacter):
                 self.active_enemy_character = next(
-                    (character for character in self.enemies if character.is_alive()), None
-                    )
+                    character for character in self.enemies if character.is_alive()
+                )
+                return
+
+            self.active_player_character = next(
+                    character for character in self.player_characters if character.is_alive()
+                )
 
     @staticmethod
     def update_idle_character_stats(idle_character: BaseCharacter):
@@ -241,23 +252,33 @@ class GameManager:
             The log to display.
         """
 
+        def create_available_characters_dict():
+            # creates and returns the dictionary for character switch menu
+
+            # the result dictionary to return
+            result = {}
+
+            # loops through every selected player characters
+            for character in self.player_characters:
+                # the display string in the menu
+                display_str = f"{character.name} - {character.job_class}"
+
+                if self.active_player_character is character:
+                    # shows player the current active character
+                    display_str += " (current)"
+
+                if not character.is_alive():
+                    # shows player the current active character
+                    display_str += " (defeated)"
+
+                result[display_str] = character
+
+            return result
+
         Ui.clear_terminal()
 
-        # get available characters
-        available_characters_dict = {}
-        for character in self.player_characters:
-            # the display string in the menu
-            display_str = f"{character.name} {character.job_class}"
-
-            if self.active_player_character is character:
-                # shows player the current active character
-                display_str += " (current)"
-
-            if not character.is_alive():
-                # shows player the current active character
-                display_str += " (defeated)"
-
-            available_characters_dict[display_str] = character
+        # craete the character switch menu dictionary
+        available_characters_dict = create_available_characters_dict()
 
         # create menu for character switch options
         character_switch_menu = Ui.Menu("Switch Active Characters", available_characters_dict)
@@ -274,6 +295,7 @@ class GameManager:
                 )
             )
 
+        # makes sure selected character is alive
         if chosen_character.is_alive():
             self.active_player_character = chosen_character
             log = f"Active character switched from {old_active_character.name} to " \
@@ -320,21 +342,11 @@ class GameManager:
         -------
         game_ended : bool
             True if the game has been won or lost, False otherwise.
-        player_won : bool
-            True if the player won, False otherwise.
-
-        Notes
-        -----
-        If game_end is False, player_won would be False too.
         """
 
-        # checks if all player or enemy characters are defeated
-        if not any(character.is_alive() for character in self.player_characters) \
-            or not any(character.is_alive() for character in self.enemies):
-            return True
-
-        else:
-            return False
+        # returns True if all player or enemy characters are defeated, False otherwise.
+        return not any(character.is_alive() for character in self.player_characters) \
+            or not any(character.is_alive() for character in self.enemies)
 
     def player_won(self):
         """Returns True if game ended and player won, False otherwise.
@@ -342,6 +354,10 @@ class GameManager:
         Returns
         -------
         bool : Returns True if game ended and player won, False otherwise.
+
+        Notes
+        -----
+        If game is not over, False would be returned.
         """
 
         if not self.is_game_over():
@@ -349,14 +365,5 @@ class GameManager:
             return False
 
         # checks if all enemies are dead and at least one character is alive
-        if any(character.is_alive() for character in self.player_characters) \
-            and not any(character.is_alive() for character in self.enemies):
-            return True
-
-        else:
-            return False
-
-
-    def end_combat(self):
-        """End the game."""
-        return
+        return any(character.is_alive() for character in self.player_characters) \
+            and not any(character.is_alive() for character in self.enemies)

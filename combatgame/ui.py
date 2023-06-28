@@ -718,7 +718,7 @@ $$    $$/    $$$/    $$       |$$ |  $$ |
             options_dict : Dict
                 A dictionary where the key represents the display text of each option, and the
                 values represent the corresponding return values.
-            """ 
+            """
             self.title = title
             self.options = {}
 
@@ -851,15 +851,14 @@ $$    $$/    $$$/    $$       |$$ |  $$ |
                     # return chosen option corresponding return value
                     return self.options[int(choice)]["return"]
 
+                # check if invalid_handler is given
+                if invalid_handler:
+                    invalid_handler()
+
                 else:
-                    # check if invalid_handler is given
-                    if invalid_handler:
-                        invalid_handler()
+                    # auto handles invalid input by running itself again
+                    print("Invalid choice. Please enter again.")
 
-                    else:
-                        # auto handles invalid input by running itself again
-                        print("Invalid choice. Please enter again.")
-
-                        # clears terminal after 1 second
-                        time.sleep(1)
-                        Ui.clear_terminal()
+                    # clears terminal after 1 second
+                    time.sleep(1)
+                    Ui.clear_terminal()

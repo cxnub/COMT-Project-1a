@@ -29,6 +29,32 @@ class Scenes:
 
         self.selected_characters: List[BaseCharacter] = []
 
+    def restore_all_character_stats(self):
+        """restore stats for alive player characters"""
+
+        for character in self.selected_characters:
+            if character.is_alive():
+                character.restore_stats()
+
+    def add_points_to_all_characters(self, stat: str, amount: int):
+        """Add stats points to all alive player characters
+        
+        Parameters
+        ----------
+        stat : str
+            The attribute name of a stat.
+        amount : int
+            The amount to add.
+        """
+
+        for character in self.selected_characters:
+            if character.is_alive():
+                # get the current value of that stat
+                current_value = getattr(character, stat, 0)
+
+                # increase the value of that stat by `amount`
+                setattr(character, stat, current_value + amount)
+
     def start_scene(self):
         """Start of the game flow.
         
@@ -99,12 +125,12 @@ class Scenes:
         player_won = first_combat.start_combat()
         time.sleep(2)
 
-        if player_won:
-            Ui.execute_lore(lore.SCENE_ONE[1])
-
-        else:
+        if not player_won:
             Ui.execute_lore(lore.PLAYER_LOST)
             return True
+
+        Ui.execute_lore(lore.SCENE_ONE[1])
+        return False
 
     def scene_two(self, flash=True):
         """First scene of the game flow.
@@ -136,12 +162,12 @@ class Scenes:
             # Create GameManager object and start combat
             second_combat = GameManager(self.selected_characters, enemies)
             player_won = second_combat.start_combat()
-            if player_won:
-                Ui.execute_lore(lore.SECOND_COMBAT_WIN)
-                return False
 
-            else:
+            if not player_won:
                 return True
+
+            Ui.execute_lore(lore.SECOND_COMBAT_WIN)
+            return False
 
         def option_one_scene():
             # the scene if the player chose option 1
@@ -149,21 +175,18 @@ class Scenes:
             option_one_lore = lore.SCENE_TWO_OPTION_ONE
             Ui.execute_lore(option_one_lore[0])
 
-            # restore stats for alive player characters
-            for character in self.selected_characters:
-                if character.is_alive():
-                    character.restore_stats()
+            # restore all character stats
+            self.restore_all_character_stats()
 
             Ui.execute_lore(option_one_lore[1])
 
             player_won = second_combat_scene()
-            if player_won:
-                Ui.execute_lore(option_one_lore[2])
 
-            else:
-                # return game_over = True, if player lost.
+            # return game_over = True, if player lost.
+            if not player_won:
                 return True
 
+            Ui.execute_lore(option_one_lore[2])
             return option_two_scene()
 
         def option_two_scene():
@@ -178,21 +201,18 @@ class Scenes:
             Ui.execute_lore(option_three_lore[0])
 
             # add 10 magic points to alive player characters
-            for character in self.selected_characters:
-                if character.is_alive():
-                    character.magic_points += 10
+            self.add_points_to_all_characters("magic_points", 10)
 
-            Ui.Animation.display_thunderstorm(flash)
+            Ui.Animation.display_thunderstorm(flash=flash)
             Ui.execute_lore(option_three_lore[1])
 
             player_won = second_combat_scene()
-            if player_won:
-                Ui.execute_lore(option_three_lore[2])
-                return option_two_scene()
-
-            else:
+            if not player_won:
                 # return game_over = True, if player lost.
                 return True
+
+            Ui.execute_lore(option_three_lore[2])
+            return option_two_scene()
 
         scene_two_options_dict = {
             "The Whispering Caverns": option_one_scene,
@@ -205,7 +225,6 @@ class Scenes:
 
         # run the selected option scene and return result
         return selected_option()
-
 
     def run_scenes(self, flash):
         """Run the scenes in order."""
