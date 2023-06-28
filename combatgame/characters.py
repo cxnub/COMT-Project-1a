@@ -124,6 +124,25 @@ class BaseCharacter:
 
         self._assign_job_class_attributes(self.job_class)
 
+    def get_active_effect(self, effect: SkillEffects):
+        """Get the effect object that matches the effect given.
+
+        Parameters
+        ----------
+        effect : SkillEffects
+            The effect class to look for.
+
+        Returns
+        -------
+        SkillEffects : The effect object if effect is in self.active_effects, None otherwise.
+        """
+
+        # checks if there is an active_effects attribute
+        if hasattr(self, "active_effects"):
+            return next((item for item in self.active_effects if isinstance(item, effect)), None)
+
+        return None
+
     def basic_attack(self, target: BaseCharacter) -> str:
         """Deals basic attack to target.
 
@@ -144,31 +163,34 @@ class BaseCharacter:
         # reduce speed points by 1
         self.speed_points -= 1
 
-        if hasattr(target, "active_effects"):
-            # checks if target have active effect
-            for effect in target.active_effects:
-                if isinstance(effect, SkillEffects.Invincible):
-                    effect: SkillEffects.Invincible
-                    log = f"{self.name}'s attack was REJECTED due to {target.name}'s" + \
-                        f" {effect.belongs_to}."
+        # checks if target has invincible effect and assigns effect to the return value
+        if effect := target.get_active_effect(SkillEffects.Invincible):
 
-                    # remove effect if its used up
-                    effect.use_count -= 1
-                    if effect.use_count == 0:
-                        target.active_effects.remove(effect)
+            # the log to return
+            log = f"{self.name}'s attack was REJECTED due to {target.name}'s" + \
+                f" {effect.belongs_to}."
 
-                    return log
+            # reduce the use count of the effect
+            effect.use_count -= 1
 
-                if isinstance(effect, SkillEffects.ReflectiveShield):
-                    effect: SkillEffects.ReflectiveShield
-                    log = effect.take_effect(self, self.attack_points)
+            # remove effect if its used up
+            if effect.use_count <= 0:
+                target.active_effects.remove(effect)
 
-                    # remove effect if its used up
-                    effect.use_count -= 1
-                    if effect.use_count == 0:
-                        target.active_effects.remove(effect)
+            return log
 
-                    return log
+        # checks if target has reflective shield effect and assigns effect to the return value
+        if effect := target.get_active_effect(SkillEffects.ReflectiveShield):
+            log = effect.take_effect(self, self.attack_points)
+
+            # reduce the use count of the effect
+            effect.use_count -= 1
+
+            # remove effect if its used up
+            if effect.use_count == 0:
+                target.active_effects.remove(effect)
+
+            return log
 
         # calculates chances of critical hit based on job class's luck
         # critical hits ignores target's defense points and reduces their HP
@@ -229,14 +251,18 @@ class BaseCharacter:
         Returns
         -------
         bool : True if character has enough points to use the skill, False otherwise.
+        log : str
+            The log for checking skill cost.
         """
 
+        # not enough speed points
         if self.speed_points < skill.speed_points_cost:
             log = f"Not enough speed points. You need {skill.speed_points_cost} but only " \
             f"have {self.speed_points}."
 
             return False, log
 
+        # not enough magic points
         if self.magic_points < skill.magic_points_cost:
             log = f"Not enough magic points. You need {skill.magic_points_cost} but only " \
             f"have {self.magic_points}."
@@ -255,6 +281,10 @@ class BaseCharacter:
 
         target : EnemyCharacter
             The target to use the skill on. Defaults to None.
+
+        Returns
+        -------
+
         """
 
         # check if skill_index is valid
@@ -268,36 +298,25 @@ class BaseCharacter:
         # check if character have enough points to use the skill
         is_available, log = self.check_skill_cost(skill)
 
-        # use the skill
-        if is_available:
+        # handle skill not available
+        if not is_available:
+            return is_available, log
 
-            confirm_menu_dict = {
-                "yes": True,
-                "no": False
-            }
+        # process the skill
 
-            confirm_menu = Ui.Menu("Confirm?", confirm_menu_dict)
-            if confirm_menu.select_option():
+        # deduct points
+        self.speed_points -= skill.speed_points_cost
+        self.magic_points -= skill.magic_points_cost
 
-                # deduct points
-                self.speed_points -= skill.speed_points_cost
-                self.magic_points -= skill.magic_points_cost
+        # use skill if target is given
+        if target:
+            return skill.use(self, target)
 
-                # use skill if target is given
-                if target:
-                    return skill.use(self, target)
-
-                elif skill.require_target:
-                    print("Skill requires a target argument.")
-
-                else:
-                    return skill.use(self)
-
-            else:
-                return "Skill cancelled."
+        if skill.require_target:
+            print("Skill requires a target argument.")
 
         else:
-            return is_available, log
+            return skill.use(self)
 
     def is_alive(self):
         """Checks if hp is > 0

@@ -188,7 +188,8 @@ class GameManager:
             if not self.is_game_over():
                 # set new active player character
                 self.active_player_character = next(
-                    (character for character in self.player_characters if character.is_alive()), None
+                    (character for character in self.player_characters if character.is_alive()),
+                    None
                     )
 
         elif not enemy.is_alive():
