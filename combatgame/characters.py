@@ -45,6 +45,8 @@ class BaseCharacter:
         The skills of the character.
     active_effects : dict
         Dictionary of active effects on character.
+    character_image : str
+        The path to the character's image.
     ascii_art : List
         The ASCII Art for the job class.
     starting_column_position : int
@@ -57,7 +59,7 @@ class BaseCharacter:
 
     # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, name: str, job_class: str=None):
+    def __init__(self, name: str, job_class: str = None):
         """Initializes a character instance.
 
          Parameters
@@ -85,6 +87,9 @@ class BaseCharacter:
 
         # active effects from using skills
         self.active_effects = []
+
+        # character's image
+        self.character_image = ""
 
         # ASCII Art of the job class
         self.ascii_art = []
@@ -257,22 +262,22 @@ class BaseCharacter:
         # not enough speed points
         if self.speed_points < skill.speed_points_cost:
             log = f"Not enough speed points. You need {skill.speed_points_cost} but only " \
-            f"have {self.speed_points}."
+                f"have {self.speed_points}."
 
             return False, log
 
         # not enough magic points
         if self.magic_points < skill.magic_points_cost:
             log = f"Not enough magic points. You need {skill.magic_points_cost} but only " \
-            f"have {self.magic_points}."
+                f"have {self.magic_points}."
 
             return False, log
 
         return True, ""
 
-    def use_skill(self, skill_index: int, target: "EnemyCharacter"=None):
+    def use_skill(self, skill_index: int, target: "EnemyCharacter" = None):
         """Use a skill.
-        
+
         Parameters
         ----------
         skill_index : int
