@@ -891,7 +891,7 @@ $$    $$/    $$$/    $$       |$$ |  $$ |
 
                 # checks if user input is valid
                 if choice.isdigit() and int(choice) in self.options:
-                    
+
                     # checks if Quit option is selected
                     if str(self.options[int(choice)]["return"]).lower() == "quit":
                         print("Quitting game...")
