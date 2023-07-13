@@ -75,7 +75,7 @@ class GameManager:
 
     def start_combat(self):
         """Start the combat.
-        
+
         Returns
         -------
         player_won : bool
@@ -100,9 +100,9 @@ class GameManager:
         input("Press enter to continue...")
         return player_won
 
-    def run_battle_logic(self, flag: bool=False):
+    def run_battle_logic(self, flag: bool = False):
         """The logic implementation for the combat battle.
-        
+
         Parameters
         ----------
         flag : bool
@@ -187,7 +187,7 @@ class GameManager:
 
     def handle_defeated_character(self, character: BaseCharacter, opponent: BaseCharacter):
         """Handles the logic when a character is defeated.
-        
+
         Parameters
         ----------
         character : BaseCharacter
@@ -218,7 +218,7 @@ class GameManager:
     @staticmethod
     def update_idle_character_stats(idle_character: BaseCharacter):
         """Update the stats for characters when its not their turn.
-        
+
         Parameters
         ----------
         idle_character : BaseCharacter
@@ -245,7 +245,7 @@ class GameManager:
 
     def switch_active_player_characters(self):
         """switch active player characters.
-        
+
         Returns
         -------
         log : str
@@ -350,7 +350,7 @@ class GameManager:
 
     def player_won(self):
         """Returns True if game ended and player won, False otherwise.
-        
+
         Returns
         -------
         bool : Returns True if game ended and player won, False otherwise.

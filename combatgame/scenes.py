@@ -12,7 +12,7 @@ from combatgame.resources import lore
 
 class Scenes:
     """This class stores all the scenes as functions.
-    
+
     Attributes
     ----------
     selected_characters : list
@@ -38,7 +38,7 @@ class Scenes:
 
     def add_points_to_all_characters(self, stat: str, amount: int):
         """Add stats points to all alive player characters
-        
+
         Parameters
         ----------
         stat : str
@@ -193,6 +193,20 @@ class Scenes:
             # the scene if the player chose option 2
 
             Ui.execute_lore(lore.SCENE_TWO_OPTION_TWO[0])
+
+            # enemies encountered in option Misty Peaks
+            enemies = [EnemyCharacter("Mistwalker")]
+
+            Ui.Animation.display_combat_start(self.selected_characters, enemies)
+
+            # Create GameManager object and start combat
+            misty_peak_combat = GameManager(self.selected_characters, enemies)
+            player_won = misty_peak_combat.start_combat()
+
+            # if not player_won:
+            #     return True
+
+            return player_won
 
         def option_three_scene():
             # the scene if the player chose option 3

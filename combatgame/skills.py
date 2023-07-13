@@ -88,6 +88,7 @@ class BaseSkill:
         raise NotImplementedError(
             "Subclasses must implement the use method")
 
+
 class SkillEffects:
     """A container class for storing skill effects data classes.
 
@@ -157,7 +158,6 @@ class SkillEffects:
 
             return log
 
-
         def __str__(self):
             return self.name
 
@@ -195,11 +195,11 @@ class Skills:
             self.description = "Increases the character's defense by a random amount with " \
                 "cat-like reflexes."
             self.message_displays = [
-                "With a swift movement, {character} activates Whisker Guard, shielding itself " \
-                    "from harm.",
+                "With a swift movement, {character} activates Whisker Guard, shielding itself "
+                "from harm.",
                 "{character} activates Whisker Guard, increasing their own defense.",
-                "By focusing their inner cat instincts, {character} empowers their defense with " \
-                    "Whisker Guard, ready to withstand any attack."
+                "By focusing their inner cat instincts, {character} empowers their defense with "
+                "Whisker Guard, ready to withstand any attack."
             ]
 
             # initialize attributes of BaseSkill class
@@ -261,12 +261,12 @@ class Skills:
             self.description = "Unleash a flurry of razor-sharp claws, striking enemies and " \
                 "removing their defense."
             self.message_displays = [
-                "The sound of claws tearing through flesh fills the air as {character} " \
-                    "delivers a devastating clawswipe, leaving {target} defenseless!",
-                "A flurry of razor-sharp claws slices through the air as {character} " \
-                    "executes a powerful clawswipe, removing {target}'s defenses!",
-                "{target} is caught off guard as {character} launches a surprise attack " \
-                    "with a ferocious clawswipe, rendering {target}'s defenses useless!"
+                "The sound of claws tearing through flesh fills the air as {character} "
+                "delivers a devastating clawswipe, leaving {target} defenseless!",
+                "A flurry of razor-sharp claws slices through the air as {character} "
+                "executes a powerful clawswipe, removing {target}'s defenses!",
+                "{target} is caught off guard as {character} launches a surprise attack "
+                "with a ferocious clawswipe, rendering {target}'s defenses useless!"
             ]
 
             # initialize attributes of BaseSkill class
@@ -318,7 +318,6 @@ class Skills:
             return message_display.format(character=character.name, target=target.name) + \
                 "\n" + battle_log
 
-
     # MirrorMage job class skill (IllusionaryAura, ReflectiveShield)
     class IllusionaryAura(BaseSkill):
         """Represents IllusionaryAura skill.
@@ -345,12 +344,12 @@ class Skills:
             self.description = "Creates a mesmerizing aura that confuses enemies, causing them " \
                 "to miss their attacks."
             self.message_displays = [
-                "{character} casts Illusionary Aura, creating a captivating aura around " \
-                    "themselves.",
-                "The mesmerizing aura of {character}'s Illusionary Aura confuses the enemy, " \
-                    "causing them to miss their attack!",
-                "The enemy's attack goes astray as they are bewildered by the illusionary aura " \
-                    "surrounding {character}."
+                "{character} casts Illusionary Aura, creating a captivating aura around "
+                "themselves.",
+                "The mesmerizing aura of {character}'s Illusionary Aura confuses the enemy, "
+                "causing them to miss their attack!",
+                "The enemy's attack goes astray as they are bewildered by the illusionary aura "
+                "surrounding {character}."
             ]
 
             # initialize attributes of BaseSkill class
@@ -410,18 +409,18 @@ class Skills:
             self.description = "Creates a magical barrier that reflects a portion of the next " \
                 "incoming spell back at the enemy."
             self.message_displays = [
-                "A shimmering shield envelops {character}, ready to reflect incoming physical " \
-                    "damage from {target}.",
-                "{character} channels their magic, creating a barrier of reflection to counter " \
-                    "{target}'s assault.",
-                "{character}'s Reflective Shield sparkles with energy, poised to send " \
-                    "{target}'s strength back at them."
+                "A shimmering shield envelops {character}, ready to reflect incoming physical "
+                "damage from {target}.",
+                "{character} channels their magic, creating a barrier of reflection to counter "
+                "{target}'s assault.",
+                "{character}'s Reflective Shield sparkles with energy, poised to send "
+                "{target}'s strength back at them."
             ]
 
             # initialize attributes of BaseSkill class
             super().__init__(self.__class__.__name__)
 
-        def use(self, character: "BaseCharacter", target: "EnemyCharacter"=None):
+        def use(self, character: "BaseCharacter", target: "EnemyCharacter" = None):
             """Use the ReflectiveShield skill.
             Creates a magical barrier that reflects the next incoming attack back at the enemy.
 
@@ -449,7 +448,6 @@ class Skills:
             # return message display
             return message_display.format(character=character.name, target=target.name) + \
                 "\n(reflective shield effect activated)"
-
 
     # Healer job class skill (HealingPurr, LuckyAura)
     class HealingPurr(BaseSkill):
@@ -479,7 +477,7 @@ class Skills:
             self.message_displays = [
                 "{character} emits a gentle purr, enveloping themselves in healing energy.",
                 "The soothing purrs of {character} resonate, restoring their health points.",
-                "{character}'s healing purr fills the air, bringing comfort and replenishing " \
+                "{character}'s healing purr fills the air, bringing comfort and replenishing " 
                 "their vitality."
             ]
 
@@ -541,10 +539,10 @@ class Skills:
                 "luck and favoring positive outcomes."
             self.message_displays = [
                 "The air around {character} shimmers with luck as the lucky charm takes effect.",
-                "The lucky charm envelops {character}, infusing them with a heightened sense of " \
-                    "favorable outcomes.",
-                "With the lucky charm activated, {character} feels a surge of good luck " \
-                    "coursing through their veins."
+                "The lucky charm envelops {character}, infusing them with a heightened sense of "
+                "favorable outcomes.",
+                "With the lucky charm activated, {character} feels a surge of good luck "
+                "coursing through their veins."
             ]
 
             # initialize attributes of BaseSkill class
@@ -577,7 +575,6 @@ class Skills:
             # return display message
             return message_display.format(character=character.name) + f"\n(+{luck_increase}% luck)"
 
-
     # Assassin job class skill (PurrfectStrike, CripplingStrike)
     class PurrfectStrike(BaseSkill):
         """Represents PurrfectStrike skill.
@@ -605,10 +602,10 @@ class Skills:
                 "spot with deadly accuracy, dealing high damage."
             self.message_displays = [
                 "With lightning speed, {character} lunges at {target}, aiming for a critical hit.",
-                "The sound of a fierce, focused purr fills the air as {character} delivers a " \
-                    "devastating blow at {target}.",
-                "{target} reels from {character}'s Purrfect Strike, unable to withstand the " \
-                    "precise attack."
+                "The sound of a fierce, focused purr fills the air as {character} delivers a "
+                "devastating blow at {target}.",
+                "{target} reels from {character}'s Purrfect Strike, unable to withstand the "
+                "precise attack."
             ]
 
             # initialize attributes of BaseSkill class

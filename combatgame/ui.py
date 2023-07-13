@@ -60,17 +60,17 @@ class Ui:
     def clear_terminal():
         """Clear the terminal screen"""
 
-        # for others
+        # for other os
         if os.name == "posix":
             os.system("clear")
 
-        # for windows
+        # for windows os
         elif os.name == "nt":
             os.system("cls")
 
     @staticmethod
     def ordinal(number: int):
-        """Returns the ordinal string of integer.
+        """Returns the ordinal string of a number.
 
         Parameters
         ----------
@@ -88,7 +88,17 @@ class Ui:
 
         # select the appropriate suffix based on the last digit of the number
         else:
-            suffix = ['th', 'st', 'nd', 'rd', 'th'][min(number % 10, 4)]
+            # list of number suffixes
+            suffixes = ['th', 'st', 'nd', 'rd', 'th']
+
+            # get last digit of number
+            last_digit = number % 10
+
+            # determine the correct suffix for the number
+            # min(last_digit, 4) ensures that index is within range of suffixes.
+            suffix = suffixes[min(last_digit, 4)]
+
+        # return the ordinal string of number.
         return str(number) + suffix
 
     @staticmethod
@@ -109,7 +119,10 @@ class Ui:
 
         # loops through paragraphs to print to console
         for paragraph in paragraphs:
+
+            # remove trailling whitespace
             paragraph = paragraph.rstrip()
+
             Ui.Animation.print_with_animation(paragraph)
             input("\n\n\nPress enter to continue...")
             Ui.clear_terminal()
@@ -182,6 +195,8 @@ class Ui:
 
         # store starting column position
         for index, character in enumerate(characters):
+
+            # assign character's starting_column_position attribute
             character.starting_column_position = starting_column_positions[index]
 
         return seperator_column_positions
@@ -202,6 +217,7 @@ class Ui:
         string : The formatted string.
         """
 
+        # adds whitespaces in front of string
         return " " * (start - 1) + string
 
     @staticmethod
@@ -264,14 +280,17 @@ class Ui:
             # define the stat title and the display of that stat
             stats = {
                 "Name": character.name,
+
                 "HP": Ui.create_percentage_bar(
                     character.health_points,
                     character.max_health_points
                     ),
+
                 "DP": Ui.create_percentage_bar(
                 character.defense_points,
                 character.max_defense_points
                 ),
+
                 "Attack": f"{character.attack_points} Points",
                 "Speed": f"{character.speed_points} Points",
                 "Luck": f"{character.luck} Points"
@@ -347,9 +366,11 @@ class Ui:
 
         stat_display_lines = []
 
-        # combine both characters stats into a single line
+        # combines both characters stats into a single line
         # as well as add the seperator in
         for line1, line2 in zip(stats_lines[0], stats_lines[1]):
+
+            # append formatted string to stat_displays_lines
             stat_display_lines.append(add_seperator(f"{line1}{line2[len(line1):]}"))
 
         # print out the stats
@@ -495,8 +516,10 @@ class Ui:
                 The delay in seconds. Defaults to 0.1.
             """
 
+            # splits string into list with "\n" as the delimeter
             lines = string.split("\n")
 
+            # iterate through every line
             for line in lines:
                 print(line)
                 time.sleep(delay)
@@ -557,8 +580,11 @@ CATastrophe Chronicles: The Wildcat Cafe
             def display_teams(team: list):
                 # display the whole team and the characters names
 
-                # variable to store each characters name and their starting column position
-                character_names_list = []
+                # store each character's name
+                character_names = []
+
+                # store each character's starting column position
+                starting_columns = []
 
                 Ui.display_ascii_art(*team, sep="")
 
@@ -566,13 +592,18 @@ CATastrophe Chronicles: The Wildcat Cafe
                 for character in team:
 
                     # add names below their ascii art respectively
-                    character_names_list.append(
-                        (f"Name: {character.name}", character.starting_column_position)
-                        )
+                    character_names.append((f"Name: {character.name}"))
+
+                    # character starting column positions to starting_columns
+                    starting_columns.append(character.starting_column_position)
 
                 # align character names to their respective position
                 character_names_line = ''
-                for string, column in character_names_list:
+
+                # loop through every item in character_names_list
+                for string, column in zip(character_names, starting_columns):
+
+                    # format the printing of character name
                     character_names_line += ("\t"+string).expandtabs(column-len(string))
 
                 # print the formatted line
@@ -617,7 +648,7 @@ $$/       $$$$$$/  $$$$$$/  $$/   $$/    $$/    $$/
 
         @staticmethod
         def display_game_over():
-            """Displays game over ASCII Art,"""
+            """Displays game over ASCII Art."""
 
             Ui.Animation.print_line_by_line(
                 """\n\n\n
@@ -666,8 +697,12 @@ $$    $$/    $$$/    $$       |$$ |  $$ |
                     while running_animation:
                         for _ in range(2):
                             # flash twice
+
+                            # change bg to black, fg to white
                             os.system("color 70")
                             time.sleep(0.2)
+
+                            # change fg to black, bg to white
                             os.system("color 07")
                             time.sleep(0.2)
 
@@ -682,18 +717,34 @@ $$    $$/    $$$/    $$       |$$ |  $$ |
             rain_animation = []
 
             # create raining animation
+            # loop once for every frame to display
             for _ in range(frames):
+
+                # ensures each frame covers the full height of the terminal
                 for _ in range(height-1):
+
+                    # ensures each frame covers the full width of terminal
                     for _ in range(width//3):
+
+                        # format the string to print to imitate raindrops
                         raindrops += " / " * random.randint(0, 1) + "   " * random.randint(1, 5)
+
+                    # append raindrops to rain_animation and fit it to the width of terminal
                     rain_animation.append(raindrops[:width])
+
+                    # reset raindrops string
                     raindrops = ""
 
+                # prints out each frame
                 print("\n".join(rain_animation))
+
+                # reset rain_animation
                 rain_animation = []
+
                 time.sleep(0.5)
                 Ui.clear_terminal()
 
+            # set a stop the animation
             running_animation = False
 
 
@@ -840,6 +891,7 @@ $$    $$/    $$$/    $$       |$$ |  $$ |
 
                 # checks if user input is valid
                 if choice.isdigit() and int(choice) in self.options:
+                    
                     # checks if Quit option is selected
                     if str(self.options[int(choice)]["return"]).lower() == "quit":
                         print("Quitting game...")

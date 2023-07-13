@@ -19,6 +19,7 @@ enemy_attributes = csv_to_dict(enemy_attributes_path, "name")
 # gets all available enemy names
 enemy_names = enemy_attributes.keys()
 
+
 class EnemyCharacter(BaseCharacter):
     """Represents an enemy character.
 
@@ -73,7 +74,7 @@ class EnemyCharacter(BaseCharacter):
 
     def select_action(self, active_player: BaseCharacter):
         """Select the best action based on a rule-based approach.
-        
+
         Parameters
         ----------
         active_player : BaseCharacter
