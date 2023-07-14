@@ -12,14 +12,14 @@ Usage:
 from functools import partial
 
 from combatgame.ui import Ui
-from combatgame.scenes import Scenes
+from combatgame.scenes import SceneManager
 from combatgame.characters import Tank, MirrorMage, Healer, Assassin
 from combatgame.skills import Skills, BaseSkill
 
 def main():
     """Main game flow."""
 
-    scenes = Scenes()
+    scenes = SceneManager()
     settings = SettingsMenu()
 
     while True:
@@ -36,6 +36,7 @@ def main():
 
         if callable(selected):
             selected()
+
         else:
             print("Not callable")
 

@@ -72,7 +72,10 @@ feline companions to embark on their next adventure. Curiosity ignited their spi
 anticipated the secrets that awaited them in the unexplored realm beyond.
 """]
 
-SCENE_TWO_OPTION_TWO = ["""The Misty Peaks: To Be Continued..."""]
+SCENE_TWO_OPTION_TWO = ["""The Misty Peaks: FINAL BOSS""",
+
+"""To be continued..."""
+]
 
 SCENE_TWO_OPTION_THREE = [
     """As the cats made their way along the Enchanted Meadow, they were greeted by a surreal and 

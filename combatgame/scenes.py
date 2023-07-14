@@ -10,7 +10,7 @@ from combatgame.enemies import EnemyCharacter
 from combatgame.resources import lore
 
 
-class Scenes:
+class SceneManager:
     """This class stores all the scenes as functions.
 
     Attributes
@@ -28,6 +28,32 @@ class Scenes:
         """Resets the class variables to default values."""
 
         self.selected_characters: List[BaseCharacter] = []
+
+    def run_combat(self, enemies: List[EnemyCharacter]):
+        """Runs the combat scene.
+        
+        Parameters
+        ----------
+        enemies : List of EnemyCharacter
+            The enemies that would appear in the combat.
+
+        Returns
+        -------
+        player_won : bool
+            True if player won, False otherwise.
+        """
+
+        # displays the start of combat
+        Ui.Animation.display_combat_start(self.selected_characters, enemies)
+
+        # initialize a GameManager object to handle the combat logic
+        combat_manager = GameManager(self.selected_characters, enemies)
+
+        # start the combat and assign the return value to player_won
+        player_won = combat_manager.start_combat()
+
+        return player_won
+
 
     def restore_all_character_stats(self):
         """restore stats for alive player characters"""
@@ -119,10 +145,9 @@ class Scenes:
         # display lore
         Ui.execute_lore(lore.SCENE_ONE[0])
 
-        # starts the combat
-        Ui.Animation.display_combat_start(self.selected_characters, encountered_enemies)
-        first_combat = GameManager(self.selected_characters, encountered_enemies)
-        player_won = first_combat.start_combat()
+        # starts the combat and assign the return value to player_won
+        player_won = self.run_combat(encountered_enemies)
+
         time.sleep(2)
 
         if not player_won:
@@ -152,86 +177,10 @@ class Scenes:
 
         Ui.execute_lore(lore.SCENE_TWO)
 
-        def second_combat_scene():
-
-            # enemy involved in second combat scene
-            enemies = [EnemyCharacter("Doomshroud")]
-
-            Ui.Animation.display_combat_start(self.selected_characters, enemies)
-
-            # Create GameManager object and start combat
-            second_combat = GameManager(self.selected_characters, enemies)
-            player_won = second_combat.start_combat()
-
-            if not player_won:
-                return True
-
-            Ui.execute_lore(lore.SECOND_COMBAT_WIN)
-            return False
-
-        def option_one_scene():
-            # the scene if the player chose option 1
-
-            option_one_lore = lore.SCENE_TWO_OPTION_ONE
-            Ui.execute_lore(option_one_lore[0])
-
-            # restore all character stats
-            self.restore_all_character_stats()
-
-            Ui.execute_lore(option_one_lore[1])
-
-            player_won = second_combat_scene()
-
-            # return game_over = True, if player lost.
-            if not player_won:
-                return True
-
-            Ui.execute_lore(option_one_lore[2])
-            return option_two_scene()
-
-        def option_two_scene():
-            # the scene if the player chose option 2
-
-            Ui.execute_lore(lore.SCENE_TWO_OPTION_TWO[0])
-
-            # enemies encountered in option Misty Peaks
-            enemies = [EnemyCharacter("Mistwalker")]
-
-            Ui.Animation.display_combat_start(self.selected_characters, enemies)
-
-            # Create GameManager object and start combat
-            misty_peak_combat = GameManager(self.selected_characters, enemies)
-            player_won = misty_peak_combat.start_combat()
-
-            # if not player_won:
-            #     return True
-
-            return player_won
-
-        def option_three_scene():
-            # the scene if the player chose option 3
-
-            option_three_lore = lore.SCENE_TWO_OPTION_THREE
-            Ui.execute_lore(option_three_lore[0])
-
-            # add 10 magic points to alive player characters
-            self.add_points_to_all_characters("magic_points", 10)
-
-            Ui.Animation.display_thunderstorm(flash=flash)
-            Ui.execute_lore(option_three_lore[1])
-
-            player_won = second_combat_scene()
-            if not player_won:
-                # return game_over = True, if player lost.
-                return True
-
-            Ui.execute_lore(option_three_lore[2])
-            return option_two_scene()
-
         scene_two_options_dict = {
-            "The Whispering Caverns": option_one_scene,
-            "The Misty Peaks": option_two_scene,
-            "The Enchanted Meadows": option_three_scene
+            "The Whispering Caverns": self.scene_two_option_one,
+            "The Misty Peaks": self.scene_two_option_two,
+            "The Enchanted Meadows": partial(self.scene_two_option_three, flash)
         }
 
         options_menu = Ui.Menu("Choose a Path", scene_two_options_dict)
@@ -239,6 +188,87 @@ class Scenes:
 
         # run the selected option scene and return result
         return selected_option()
+
+    def doomshroud_combat_scene(self):
+        """Doomshroud combat scene."""
+
+        # enemy involved in second combat scene
+        encountered_enemies = [EnemyCharacter("Doomshroud")]
+
+        # starts the combat and assign the return value to player_won
+        player_won = self.run_combat(encountered_enemies)
+
+        if player_won:
+            Ui.execute_lore(lore.SECOND_COMBAT_WIN)
+
+        return player_won
+
+    def scene_two_option_one(self):
+        """The scene if the player chose option 1."""
+
+        option_one_lore = lore.SCENE_TWO_OPTION_ONE
+        Ui.execute_lore(option_one_lore[0])
+
+        # restore all character stats
+        self.restore_all_character_stats()
+
+        Ui.execute_lore(option_one_lore[1])
+
+        player_won = self.doomshroud_combat_scene()
+
+        if not player_won:
+            # returns game_over = True, if player lost
+            return True
+
+        Ui.execute_lore(option_one_lore[2])
+
+        return self.scene_two_option_two()
+
+    def scene_two_option_two(self):
+        """The scene if the player chose option 2."""
+
+        Ui.execute_lore(lore.SCENE_TWO_OPTION_TWO[0])
+
+        # enemies encountered in option Misty Peaks
+        encountered_enemies = [EnemyCharacter("Mistwalker")]
+
+        # starts the combat and assign the return value to player_won
+        player_won = self.run_combat(encountered_enemies)
+
+        Ui.execute_lore(lore.SCENE_TWO_OPTION_TWO[1])
+
+        return player_won
+
+    def scene_two_option_three(self, flash):
+        """The scene if the player chose option 3.
+        
+        Parameters
+        ----------
+        flash : bool
+            Whether to flash lightning during thunderstorm.
+
+        Notes
+        -----
+        Flash Warning!!
+        """
+
+        option_three_lore = lore.SCENE_TWO_OPTION_THREE
+        Ui.execute_lore(option_three_lore[0])
+
+        # add 10 magic points to alive player characters
+        self.add_points_to_all_characters("magic_points", 10)
+
+        Ui.Animation.display_thunderstorm(flash=flash)
+        Ui.execute_lore(option_three_lore[1])
+
+        player_won = self.doomshroud_combat_scene()
+
+        if not player_won:
+            # return game_over = True, if player lost.
+            return True
+
+        Ui.execute_lore(option_three_lore[2])
+        return self.scene_two_option_two()
 
     def run_scenes(self, flash):
         """Run the scenes in order."""

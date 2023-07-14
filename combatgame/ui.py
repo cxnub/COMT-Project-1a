@@ -13,6 +13,7 @@ import time
 import random
 import threading
 import textwrap
+import winsound
 from typing import AnyStr, Dict, TYPE_CHECKING, Callable, List
 
 if TYPE_CHECKING:
@@ -708,6 +709,14 @@ $$    $$/    $$$/    $$       |$$ |  $$ |
 
                         time.sleep(3)
 
+            # get relative path of thunderstorm.mp3
+            thunderstorm_sound_file_path = os.path.join(
+                os.path.dirname(__file__), 'resources', 'sounds', 'thunderstorm.wav'
+                )
+
+            # play sound in background without blocking code
+            winsound.PlaySound(thunderstorm_sound_file_path, winsound.SND_ASYNC | winsound.SND_LOOP)
+
             if flash:
                 # run the lightning animation in the background
                 lightning_animation = threading.Thread(target=lightning_animation)
@@ -744,6 +753,9 @@ $$    $$/    $$$/    $$       |$$ |  $$ |
                 time.sleep(0.5)
                 Ui.clear_terminal()
 
+            # stop background sound
+            winsound.PlaySound(None, winsound.SND_ASYNC)
+
             # set a stop the animation
             running_animation = False
 
@@ -751,12 +763,26 @@ $$    $$/    $$$/    $$       |$$ |  $$ |
     class Menu:
         """Represents a UI Menu.
 
+        Parameters
+        ----------
+        title : str
+            The title of the menu.
+        options_dict : Dict
+            A dictionary where the key represents the display text of each option, and the
+            values represent the corresponding return values.
+
         Attributes
         ----------
         title : str
             The title of the menu.
         options : Dict
             The available options in the menu.
+
+        Notes
+        -----
+        `options_dict` should be in the format of `{display_value: return_value}` where
+        `display_value` is the string of an option a user can choose and `return_value`
+        is the value to return when user chose that option.
         """
 
         def __init__(self, title: str, options_dict: Dict):
