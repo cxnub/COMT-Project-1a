@@ -5,12 +5,12 @@ import random
 import os
 from typing import TYPE_CHECKING
 
-from combatgame.skills import Skills, BaseSkill, SkillEffects
-from combatgame.utils.utils import csv_to_dict
-from combatgame.resources.ascii_art import ascii_arts
+from .skills import Skills, BaseSkill, SkillEffects
+from .utils.utils import csv_to_dict
+from .resources.ascii_art import ascii_arts
 
 if TYPE_CHECKING:
-    from combatgame.enemies import EnemyCharacter
+    from .enemies import EnemyCharacter
 
 # get directory of this file
 this_file_dir = os.path.dirname(os.path.abspath(__file__))
@@ -285,10 +285,6 @@ class BaseCharacter:
 
         target : EnemyCharacter
             The target to use the skill on. Defaults to None.
-
-        Returns
-        -------
-
         """
 
         # check if skill_index is valid

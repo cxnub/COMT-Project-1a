@@ -4,12 +4,12 @@ import os
 import random
 from typing import TYPE_CHECKING
 
-from combatgame.utils.utils import csv_to_dict
+from .utils.utils import csv_to_dict
 
 # import only for type hinting
 if TYPE_CHECKING:
-    from combatgame.characters import BaseCharacter
-    from combatgame.enemies import EnemyCharacter
+    from .characters import BaseCharacter
+    from .enemies import EnemyCharacter
 
 
 # get directory of this file
@@ -84,7 +84,16 @@ class BaseSkill:
         self.belongs_to: str = str(attr["belongs_to"])
 
     def use(self, character: "BaseCharacter", target: "EnemyCharacter" = None):
-        """Use the skill."""
+        """Use the skill.
+        
+            Parameters
+            ----------
+            character : BaseCharacter
+                The character thats using the skill.
+                
+            Target : EnemyCharacter
+                The enemy to use the skill on.
+        """
         raise NotImplementedError(
             "Subclasses must implement the use method")
 

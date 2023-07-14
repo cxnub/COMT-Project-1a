@@ -17,8 +17,8 @@ import winsound
 from typing import AnyStr, Dict, TYPE_CHECKING, Callable, List
 
 if TYPE_CHECKING:
-    from combatgame.characters import BaseCharacter
-    from combatgame.enemies import EnemyCharacter
+    from .characters import BaseCharacter
+    from .enemies import EnemyCharacter
 
 
 class Ui:
@@ -110,7 +110,7 @@ class Ui:
         Parameters
         ----------
         lore : str
-        the lore to be displayed. Defaults to None.
+            The lore to be displayed. Defaults to None.
         """
         # clear terminal
         Ui.clear_terminal()
@@ -213,8 +213,8 @@ class Ui:
         start : int
             The starting column position. Defaults to 0.
 
-        Return
-        ------
+        Returns
+        -------
         string : The formatted string.
         """
 
@@ -225,6 +225,8 @@ class Ui:
     def print_box(content):
         """Print content enclosed in a box.
 
+        Parameters
+        ----------
         content : str
             The content to be enclosed in the box.
         """
@@ -386,6 +388,8 @@ class Ui:
         ):
         """Displays the whole combat screen.
         
+        Parameters
+        ----------
         player_character : BaseCharacter
             The player character object.
         enemy_character : EnemyCharacter

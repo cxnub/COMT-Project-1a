@@ -6,24 +6,14 @@ from datetime import datetime
 from functools import partial
 from collections import deque
 
-from combatgame.characters import BaseCharacter, Tank, MirrorMage, Healer, Assassin
-from combatgame.enemies import EnemyCharacter
-from combatgame.ui import Ui
+from .characters import BaseCharacter, Tank, MirrorMage, Healer, Assassin
+from .enemies import EnemyCharacter
+from .ui import Ui
 
 
 class GameManager:
-    """Game Manager class responsible for managing the gameplay and interactions between
+    """Game Manager class responsible for managing the combat gameplay and interactions between
     player characters and enemies during a combat.
-
-    Parameters
-    ----------
-    player_characters : List[Union[Tank, MirrorMage, Healer, Assassin]]
-        A list of player characters participating in the game.
-        Each player character can be an instance of Tank, MirrorMage, Healer, or Assassin class.
-
-    enemies : List[EnemyCharacter]
-        A list of enemy characters participating in the game. Each enemy character is an instance
-        of the EnemyCharacter class.
 
     Attributes
     ----------
@@ -353,7 +343,8 @@ class GameManager:
 
         Returns
         -------
-        bool : Returns True if game ended and player won, False otherwise.
+        bool
+            Returns True if game ended and player won, False otherwise.
 
         Notes
         -----

@@ -2,9 +2,9 @@
 import os
 from functools import partial
 
-from combatgame.characters import BaseCharacter
-from combatgame.resources.ascii_art import ascii_arts
-from combatgame.utils.utils import csv_to_dict
+from .characters import BaseCharacter
+from .resources.ascii_art import ascii_arts
+from .utils.utils import csv_to_dict
 
 
 # get directory of this file

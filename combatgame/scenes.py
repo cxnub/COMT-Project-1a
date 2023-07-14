@@ -3,11 +3,11 @@ import time
 from typing import List
 from functools import partial
 
-from combatgame.ui import Ui
-from combatgame.game_manager import GameManager
-from combatgame.characters import BaseCharacter, Tank, MirrorMage, Healer, Assassin
-from combatgame.enemies import EnemyCharacter
-from combatgame.resources import lore
+from .ui import Ui
+from .game_manager import GameManager
+from .characters import BaseCharacter, Tank, MirrorMage, Healer, Assassin
+from .enemies import EnemyCharacter
+from .resources import lore
 
 
 class SceneManager:
@@ -30,7 +30,7 @@ class SceneManager:
         self.selected_characters: List[BaseCharacter] = []
 
     def run_combat(self, enemies: List[EnemyCharacter]):
-        """Runs the combat scene.
+        """Runs a combat scene.
         
         Parameters
         ----------
@@ -158,7 +158,7 @@ class SceneManager:
         return False
 
     def scene_two(self, flash=True):
-        """First scene of the game flow.
+        """Second scene of the game flow.
         
         Parameters
         ----------
@@ -204,7 +204,7 @@ class SceneManager:
         return player_won
 
     def scene_two_option_one(self):
-        """The scene if the player chose option 1."""
+        """Second scene option one: The Whispering Caverns."""
 
         option_one_lore = lore.SCENE_TWO_OPTION_ONE
         Ui.execute_lore(option_one_lore[0])
@@ -225,7 +225,7 @@ class SceneManager:
         return self.scene_two_option_two()
 
     def scene_two_option_two(self):
-        """The scene if the player chose option 2."""
+        """Second scene option one: The Misty Peaks."""
 
         Ui.execute_lore(lore.SCENE_TWO_OPTION_TWO[0])
 
@@ -240,7 +240,7 @@ class SceneManager:
         return player_won
 
     def scene_two_option_three(self, flash):
-        """The scene if the player chose option 3.
+        """Second scene option one: The Enchanted Meadows.
         
         Parameters
         ----------
@@ -271,7 +271,13 @@ class SceneManager:
         return self.scene_two_option_two()
 
     def run_scenes(self, flash):
-        """Run the scenes in order."""
+        """Run the scenes in order.
+        
+        Parameters
+        ----------
+        flash : bool
+            Whether to flash lightning during thunderstorm animation.
+        """
         scenes_order = [self.start_scene, self.scene_one, partial(self.scene_two, flash)]
         for scene in scenes_order:
             game_over = scene()
