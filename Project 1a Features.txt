@@ -1,0 +1,14 @@
+Project 1a Features
+Name: CATastrophe Chronicles: The Wildcat Cafe
+
+Author: Koh Cheng Xi 2302241A
+
+Usage: python main.py
+
+Features
+- Players can attack, heal, use skills and switch characters during combat
+- Enemies can only attack and heal
+- Created 8 unique skills
+- Ability to view characters and skills attributes in home page
+- Ability to quit at any point in the game
+- Settings Menu

@@ -17,10 +17,13 @@ from combatgame.characters import Tank, MirrorMage, Healer, Assassin
 from combatgame.skills import Skills, BaseSkill
 
 def main():
-    """Main game flow."""
-
-    scenes = SceneManager()
-    settings = SettingsMenu()
+    """Main game flow.
+    
+    Parameters
+    ----------
+    flag : bool
+        Whether the function is called within itself.
+    """
 
     while True:
         start_menu_dict = {
@@ -51,7 +54,7 @@ class HelpMenu:
         help_menu_dict = {
             "Job Classes": HelpMenu.job_classes,
             "Skills": HelpMenu.skills,
-            "Back": main
+            "Back": partial(main, True)
         }
 
         Ui.clear_terminal()
@@ -181,7 +184,7 @@ class SettingsMenu:
         while True:
             settings_menu_dict = {
                 f"Flashes ({'On' if self.flash else 'Off'})": toggle_flash,
-                "Back": main
+                "Back": partial(main, True)
             }
 
             # display settings menu
@@ -193,4 +196,9 @@ class SettingsMenu:
 
 
 if __name__ == "__main__":
+
+    # initialize SceneManager and SettingsMenu
+    scenes = SceneManager()
+    settings = SettingsMenu()
+
     main()
