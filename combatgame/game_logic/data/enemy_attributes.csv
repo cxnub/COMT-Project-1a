@@ -1,0 +1,5 @@
+name,HP,AP,DP,SP,Luck,image
+Dreadspire,120,20,18,3,6,\resources\images\cat_tank.png
+Mistwalker,40,15,4,6,8,\resources\images\cat_tank.png
+Viperstrike,30,10,6,4,10,\resources\images\cat_tank.png
+Doomshroud,50,25,10,8,15,\resources\images\cat_tank.png
